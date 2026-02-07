@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Netflix Color Palette -->
+    <color name="netflix_black">#141414</color>
+    <color name="netflix_red">#E50914</color>
+    <color name="netflix_dark_red">#B20710</color>
+    <color name="netflix_gray">#564D4D</color>
+    <color name="netflix_light_gray">#808080</color>
+    
+    <!-- Auth Screen Colors -->
+    <color name="auth_background">#141414</color>
+    <color name="auth_pin_background">#1F1F1F</color>
+    <color name="auth_accent">#E50914</color>
+    
+    <!-- Legacy colors (keep for compatibility) -->
+    <color name="plex_orange">#E5A00D</color>
+    <color name="plex_dark_orange">#CC8F0C</color>
+    <color name="background_dark">#141414</color>
+    <color name="background_darker">#0D0D0D</color>
+    <color name="background_overlay">#80000000</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B3B3B3</color>
+    <color name="text_tertiary">#666666</color>
+    <color name="focus_highlight">#FFFFFF</color>
+    <color name="selection_background">#333333</color>
+    
+    <!-- Standard colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+</resources>

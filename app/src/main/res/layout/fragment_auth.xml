@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <!-- LEFT PANEL - Netflix Black -->
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.3"
+        android:background="@color/netflix_black"
+        android:gravity="center">
+
+        <!-- App Name Only -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="64sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/spacemono_bold"
+            android:letterSpacing="-0.03"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+    <!-- RIGHT PANEL - Pitch Black -->
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.7"
+        android:background="@color/black"
+        android:padding="60dp">
+
+        <!-- PIN Section -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Instructions -->
+            <TextView
+                android:id="@+id/auth_instructions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auth_instructions"
+                android:textSize="18sp"
+                android:textColor="@color/netflix_light_gray"
+                android:fontFamily="@font/spacemono_regular"
+                android:gravity="center"
+                android:layout_marginBottom="28dp" />
+
+            <!-- PIN Container with Glow -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/pin_glow_background"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:id="@+id/pin_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="----"
+                    android:textSize="52sp"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/spacemono_bold"
+                    android:letterSpacing="0.35"
+                    android:layout_gravity="center"
+                    tools:text="1234" />
+
+            </FrameLayout>
+
+            <!-- Helper Text -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Enter this code at plex.tv/link"
+                android:textSize="16sp"
+                android:textColor="@color/netflix_light_gray"
+                android:fontFamily="@font/spacemono_regular"
+                android:gravity="center"
+                android:alpha="0.7"
+                android:layout_marginTop="24dp" />
+
+        </LinearLayout>
+
+        <!-- Hidden elements for state management -->
+        <TextView
+            android:id="@+id/status_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/loading_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <!-- Error Container -->
+        <LinearLayout
+            android:id="@+id/error_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="60dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <TextView
+                android:id="@+id/error_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/netflix_red"
+                android:fontFamily="@font/spacemono_regular"
+                android:gravity="center"
+                android:layout_marginBottom="20dp"
+                tools:text="Authentication failed" />
+
+            <Button
+                android:id="@+id/retry_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/retry"
+                android:textSize="18sp"
+                android:minWidth="200dp"
+                android:paddingVertical="14dp"
+                android:background="@color/netflix_red"
+                android:textColor="@color/white"
+                android:fontFamily="@font/spacemono_bold"
+                android:textAllCaps="false"
+                android:elevation="4dp"
+                android:focusable="true"
+                android:clickable="true" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,9 +1,29 @@
-#
-# https://help.github.com/articles/dealing-with-line-endings/
-#
-# Linux start script should use lf
-/gradlew        text eol=lf
+# -------------------------------
+# Languages to COUNT
+# -------------------------------
+*.kt        linguist-language=Kotlin
+*.kts       linguist-language=Kotlin
+*.java      linguist-language=Java
+*.xml       linguist-language=XML
+*.gradle    linguist-language=Groovy
 
-# These are Windows script files and should use crlf
-*.bat           text eol=crlf
+# -------------------------------
+# Ignore everything else
+# -------------------------------
+*           linguist-vendored
 
+# Re-include only the core files
+*.kt        linguist-vendored=false
+*.kts       linguist-vendored=false
+*.java      linguist-vendored=false
+*.xml       linguist-vendored=false
+*.gradle    linguist-vendored=false
+
+# -------------------------------
+# Generated / build directories
+# -------------------------------
+build/**    linguist-generated
+.gradle/**  linguist-generated
+.idea/**    linguist-generated
+.vscode/**  linguist-generated
+out/**      linguist-generated
