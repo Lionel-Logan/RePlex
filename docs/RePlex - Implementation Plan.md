@@ -856,7 +856,7 @@ Based on the OpenAPI spec and developer.plex.tv documentation, here are the key 
 - **Kotlin Style:** Follow Android Kotlin style guide
 - **Architecture:** MVVM pattern with Repository layer
 - **Error Handling:** Use `Result<T>` sealed class
-- **Logging:** Use `Log.d()` only (no Timber) for consistent debugging
+- **Logging:** Use `Log.i()` only (no Timber) for consistent debugging
 - **Testing:** Unit tests for ViewModels, integration tests for API
 
 ### Git Workflow
@@ -882,7 +882,7 @@ Based on the OpenAPI spec and developer.plex.tv documentation, here are the key 
   # Bad: Filtered logs (hides critical errors)
   adb logcat | Select-String "error"
   ```
-- **Debugging:** Use `Log.d("RePlex", message)` for all logging (no Timber)
+- **Debugging:** Use `Log.i("RePlex", message)` for all logging (no Timber)
 
 ### Testing Strategy
 - **Unit Tests:** ViewModels, API parsers, utilities

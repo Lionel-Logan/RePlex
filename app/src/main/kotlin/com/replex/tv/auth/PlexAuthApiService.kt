@@ -30,4 +30,17 @@ interface PlexAuthApiService {
         @Header("X-Plex-Client-Identifier") clientId: String,
         @Query("code") code: String
     ): Response<PinResponse>
+    
+    /**
+     * Get user's Plex resources (servers)
+     */
+    @GET("api/v2/resources")
+    @Headers("Accept: application/json")
+    suspend fun getResources(
+        @Header("X-Plex-Token") token: String,
+        @Header("X-Plex-Product") product: String,
+        @Header("X-Plex-Client-Identifier") clientId: String,
+        @Query("includeHttps") includeHttps: Int = 1,
+        @Query("includeRelay") includeRelay: Int = 0
+    ): Response<List<PlexResource>>
 }

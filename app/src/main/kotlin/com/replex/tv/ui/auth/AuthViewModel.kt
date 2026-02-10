@@ -11,7 +11,6 @@ import com.replex.tv.auth.PinResponse
 import com.replex.tv.utils.ClientIdGenerator
 import com.replex.tv.utils.TokenManager
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * ViewModel for authentication flow
@@ -28,6 +27,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     
     private var currentPinId: Int? = null
     private var currentCode: String? = null
+    private var retryCount = 0
+    private val maxRetries = 3
     
     sealed class AuthState {
         object Loading : AuthState()
@@ -38,15 +39,13 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
     
     fun startAuthFlow() {
-        Log.d("RePlex", "startAuthFlow called")
-        Timber.d("REPLEX: startAuthFlow called")
+        Log.i("RePlex", "startAuthFlow called")
         _authState.value = AuthState.Loading
         
         viewModelScope.launch {
             try {
                 // Generate PIN
-                Log.d("RePlex", "About to call authService.generatePin()")
-                Timber.d("REPLEX: About to call authService.generatePin()")
+                Log.i("RePlex", "About to call authService.generatePin()")
                 val result = authService.generatePin()
                 
                 if (result.isSuccess) {
@@ -55,32 +54,33 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     currentCode = pinResponse.code
                     
                     // Log what we received
-                    Log.d("RePlex", "=== PIN RESPONSE ===")
-                    Log.d("RePlex", "  id: ${pinResponse.id}")
-                    Log.d("RePlex", "  code length: ${pinResponse.code.length} chars")
-                    Log.d("RePlex", "  code value: '${pinResponse.code}'")
-                    Log.d("RePlex", "  qr: ${pinResponse.qr}")
-                    Log.d("RePlex", "  authToken: ${pinResponse.authToken?.take(20)}...")
-                    Log.d("RePlex", "  product: ${pinResponse.product}")
-                    Log.d("RePlex", "==================")
+                    Log.i("RePlex", "=== PIN RESPONSE ===")
+                    Log.i("RePlex", "  id: ${pinResponse.id}")
+                    Log.i("RePlex", "  code length: ${pinResponse.code.length} chars")
+                    Log.i("RePlex", "  code value: '${pinResponse.code}'")
+                    Log.i("RePlex", "  qr: ${pinResponse.qr}")
+                    Log.i("RePlex", "  authToken: ${pinResponse.authToken?.take(20)}...")
+                    Log.i("RePlex", "  product: ${pinResponse.product}")
+                    Log.i("RePlex", "==================")
                     
                     // Display the full PIN code (4 digits when strong=false)
                     val displayPin = pinResponse.code.uppercase()
                     _pinCode.value = displayPin
                     _authState.value = AuthState.WaitingForUser
                     
-                    Log.d("RePlex", "Displaying PIN: $displayPin")
-                    Timber.d("PIN generated: ${pinResponse.code}")
+                    Log.i("RePlex", "Displaying PIN: $displayPin")
                     
                     // Start polling for authentication
                     pollForAuth()
                 } else {
                     _authState.value = AuthState.Error("Failed to generate PIN. Please try again.")
-                    Timber.e(result.exceptionOrNull(), "Failed to generate PIN")
+                    Log.e("RePlex", "Failed to generate PIN: ${result.exceptionOrNull()}")
+                    retryCount = 0
                 }
             } catch (e: Exception) {
                 _authState.value = AuthState.Error("Network error. Please check your connection.")
-                Timber.e(e, "Error in auth flow")
+                Log.e("RePlex", "Error in auth flow", e)
+                retryCount = 0
             }
         }
     }
@@ -99,7 +99,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     maxAttempts = 150, // 5 minutes
                     delayMs = 2000,
                     onPollAttempt = { attempt ->
-                        Timber.d("Polling attempt: $attempt")
+                        Log.i("RePlex", "Polling attempt: $attempt")
                     }
                 )
                 
@@ -107,19 +107,36 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     // Save token
                     TokenManager.saveToken(getApplication(), authToken)
                     _authState.value = AuthState.Success
-                    Timber.d("Authentication successful!")
+                    Log.i("RePlex", "Authentication successful!")
                 } else {
-                    _authState.value = AuthState.Error("Authentication timed out. Please try again.")
-                    Timber.w("Authentication timed out")
+                    // Timeout occurred - retry with new PIN
+                    if (retryCount < maxRetries) {
+                        retryCount++
+                        Log.w("RePlex", "Authentication timed out. Retrying... (attempt $retryCount/$maxRetries)")
+                        startAuthFlow()
+                    } else {
+                        _authState.value = AuthState.Error("Authentication failed after $maxRetries attempts. Please try again.")
+                        Log.w("RePlex", "Authentication timed out after max retries")
+                        retryCount = 0
+                    }
                 }
             } catch (e: Exception) {
-                _authState.value = AuthState.Error("Authentication failed. Please try again.")
-                Timber.e(e, "Error polling for auth")
+                // On exception, also retry automatically
+                if (retryCount < maxRetries) {
+                    retryCount++
+                    Log.e("RePlex", "Error polling for auth. Retrying... (attempt $retryCount/$maxRetries): ${e.message}")
+                    startAuthFlow()
+                } else {
+                    _authState.value = AuthState.Error("Authentication failed after $maxRetries attempts. Please try again.")
+                    Log.e("RePlex", "Error polling for auth after max retries", e)
+                    retryCount = 0
+                }
             }
         }
     }
     
     fun retry() {
+        retryCount = 0
         startAuthFlow()
     }
 }

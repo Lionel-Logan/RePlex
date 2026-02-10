@@ -34,6 +34,11 @@ object PlexClient {
         .addInterceptor { chain ->
             val token = context?.let { TokenManager.getToken(it) } ?: ""
             
+            android.util.Log.d("RePlex", "=== API Request ===")
+            android.util.Log.d("RePlex", "URL: ${chain.request().url}")
+            android.util.Log.d("RePlex", "Method: ${chain.request().method}")
+            android.util.Log.d("RePlex", "Token length: ${token.length}")
+            
             val request = chain.request().newBuilder()
                 .addHeader("X-Plex-Token", token)
                 .addHeader("X-Plex-Client-Identifier", clientId)
@@ -46,7 +51,9 @@ object PlexClient {
                 .addHeader("Accept", "application/json")
                 .build()
             
-            chain.proceed(request)
+            val response = chain.proceed(request)
+            android.util.Log.d("RePlex", "Response code: ${response.code}")
+            response
         }
         .addInterceptor(loggingInterceptor)
         .connectTimeout(30, TimeUnit.SECONDS)

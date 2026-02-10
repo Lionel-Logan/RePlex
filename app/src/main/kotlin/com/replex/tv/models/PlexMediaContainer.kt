@@ -3,6 +3,14 @@ package com.replex.tv.models
 import com.google.gson.annotations.SerializedName
 
 /**
+ * Wrapper for Plex API responses
+ */
+data class PlexResponse(
+    @SerializedName("MediaContainer")
+    val MediaContainer: PlexMediaContainer
+)
+
+/**
  * Root container for Plex API responses
  */
 data class PlexMediaContainer(

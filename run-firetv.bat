@@ -16,8 +16,11 @@ REM ===============================
 
 echo.
 echo [0/5] Cleaning build artifacts and building APK...
-taskkill /f /im java.exe 2>nul
+REM taskkill /f /im java.exe 2>nul
+call gradlew --stop
 timeout /t 1 /nobreak
+if exist "app\build\intermediates" rd /s /q "app\build\intermediates" 2>nul
+call gradlew clean
 call gradlew assembleDebug
 if errorlevel 1 (
     echo BUILD FAILED
@@ -36,8 +39,6 @@ adb connect %FIRE_TV_IP%:5555
 
 echo.
 echo [3/5] Clearing app data and installing APK...
-adb shell pm clear %APP_ID%
-timeout /t 1 /nobreak
 adb install -r "%APK_PATH%"
 if errorlevel 1 (
     echo INSTALL FAILED
@@ -53,7 +54,7 @@ echo.
 echo [5/5] Clearing logcat and monitoring logs (CTRL+C to stop)...
 adb logcat -c
 timeout /t 2 /nobreak
-adb logcat | findstr "RePlex"
+adb logcat | findstr "%LOG_TAG%"
 
 endlocal
 exit /b 0

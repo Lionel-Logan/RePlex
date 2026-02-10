@@ -126,4 +126,28 @@ class PlexAuthService(private val clientId: String) {
         Timber.w("Authentication timed out after $maxAttempts attempts")
         return null
     }
+    
+    /**
+     * Get user's Plex resources (servers and players)
+     * @param authToken User's auth token
+     * @return List of PlexResource objects
+     */
+    suspend fun getResources(authToken: String): Result<List<PlexResource>> {
+        return try {
+            val response = api.getResources(
+                token = authToken,
+                product = PRODUCT_NAME,
+                clientId = clientId
+            )
+            
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Failed to get resources: ${response.code()} ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error getting resources")
+            Result.failure(e)
+        }
+    }
 }

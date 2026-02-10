@@ -1,6 +1,7 @@
 package com.replex.tv.api
 
 import com.replex.tv.models.PlexMediaContainer
+import com.replex.tv.models.PlexResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -13,13 +14,13 @@ interface PlexApiService {
      * Get server information and capabilities
      */
     @GET("/")
-    suspend fun getServerInfo(): Response<PlexMediaContainer>
+    suspend fun getServerInfo(): Response<PlexResponse>
     
     /**
      * Get all library sections (Movies, TV Shows, etc.)
      */
     @GET("/library/sections")
-    suspend fun getLibrarySections(): Response<PlexMediaContainer>
+    suspend fun getLibrarySections(): Response<PlexResponse>
     
     /**
      * Get all items in a specific library section
@@ -30,7 +31,18 @@ interface PlexApiService {
     suspend fun getSectionContent(
         @Path("id") sectionId: String,
         @Query("type") type: Int? = null
-    ): Response<PlexMediaContainer>
+    ): Response<PlexResponse>
+    
+    /**
+     * Get content filtered by genre
+     * @param sectionId The library section ID
+     * @param genre Genre tag ID or name
+     */
+    @GET("/library/sections/{id}/all")
+    suspend fun getSectionContentByGenre(
+        @Path("id") sectionId: String,
+        @Query("genre") genre: String
+    ): Response<PlexResponse>
     
     /**
      * Get detailed metadata for a specific item
@@ -39,25 +51,31 @@ interface PlexApiService {
     @GET("/library/metadata/{ratingKey}")
     suspend fun getMetadata(
         @Path("ratingKey") ratingKey: String
-    ): Response<PlexMediaContainer>
+    ): Response<PlexResponse>
     
     /**
      * Get all hubs for the home screen
+     * Note: X-Plex-Token can be passed as query param or header
      */
     @GET("/hubs/home")
-    suspend fun getHomeHubs(): Response<PlexMediaContainer>
+    suspend fun getHomeHubs(
+        @Query("X-Plex-Token") token: String? = null
+    ): Response<PlexResponse>
     
     /**
-     * Get continue watching hub
+     * Get continue watching hub (on deck)
      */
-    @GET("/hubs/home/continueWatching")
-    suspend fun getContinueWatching(): Response<PlexMediaContainer>
+    @GET("/library/onDeck")
+    suspend fun getContinueWatching(): Response<PlexResponse>
     
     /**
-     * Get recently added content
+     * Get recently added content for a specific section
+     * @param sectionId The library section ID
      */
-    @GET("/hubs/home/recentlyAdded")
-    suspend fun getRecentlyAdded(): Response<PlexMediaContainer>
+    @GET("/library/sections/{id}/recentlyAdded")
+    suspend fun getSectionRecentlyAdded(
+        @Path("id") sectionId: String
+    ): Response<PlexResponse>
     
     /**
      * Get hubs for a specific library section
@@ -66,7 +84,7 @@ interface PlexApiService {
     @GET("/library/sections/{id}/hubs")
     suspend fun getSectionHubs(
         @Path("id") sectionId: String
-    ): Response<PlexMediaContainer>
+    ): Response<PlexResponse>
     
     /**
      * Get seasons for a TV show
@@ -75,7 +93,7 @@ interface PlexApiService {
     @GET("/library/metadata/{ratingKey}/children")
     suspend fun getSeasons(
         @Path("ratingKey") ratingKey: String
-    ): Response<PlexMediaContainer>
+    ): Response<PlexResponse>
     
     /**
      * Get episodes for a TV show or season
@@ -84,7 +102,7 @@ interface PlexApiService {
     @GET("/library/metadata/{ratingKey}/allLeaves")
     suspend fun getEpisodes(
         @Path("ratingKey") ratingKey: String
-    ): Response<PlexMediaContainer>
+    ): Response<PlexResponse>
     
     /**
      * Universal search
@@ -93,7 +111,7 @@ interface PlexApiService {
     @GET("/hubs/search")
     suspend fun search(
         @Query("query") query: String
-    ): Response<PlexMediaContainer>
+    ): Response<PlexResponse>
     
     /**
      * Update playback timeline

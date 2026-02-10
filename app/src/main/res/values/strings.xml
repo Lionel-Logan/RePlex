@@ -17,9 +17,11 @@
     
     <!-- Navigation -->
     <string name="nav_home">Home</string>
-    <string name="nav_browse">Browse</string>
-    <string name="nav_search">Search</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_movies">Movies</string>
+    <string name="nav_tv_shows">TV Shows</string>
     <string name="nav_languages">Languages</string>
+    <string name="nav_search">Search</string>
     <string name="nav_settings">Settings</string>
     
     <!-- Content -->
